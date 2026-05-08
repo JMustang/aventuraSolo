@@ -41,6 +41,37 @@ def create_story(
     db.add(job)
     db.commit()
 
-    # TODO: Add background tasks to generate story and update job status
+    background_tasks.add_task(
+        generate_story_task, job_id=job_id, theme=request.theme, session_id=session_id
+    )
 
     return job
+
+
+def generate_story_task(job_id: str, theme: str, session_id: str):
+    db = SessionLocal()
+
+    try:
+        job = db.query(StoryJob).filter(StoryJob.job_id == job_id).first()
+
+        if not job:
+            return
+
+        try:
+            job.status = "processing"
+            db.commit()
+
+            story = {}  # TODO: Generate story based on theme
+
+            job.story_id = 1  # TODO: update story id after story is created
+            job.status = "completed"
+            job.completed_at = datetime.now()
+            db.commit()
+
+        except Exception as e:
+            job.status = "failed"
+            job.completed_at = datetime.now()
+            job.error = str(e)
+            db.commit()
+    finally:
+        db.close()
