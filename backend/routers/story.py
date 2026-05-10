@@ -14,7 +14,7 @@ from schemas.story import (
 )
 from schemas.job import StoryJobResponse
 
-router = APIRouter(prefix="/stories", tags="Stories")
+router = APIRouter(prefix="/stories", tags=["Stories"])
 
 
 def get_session_id(session_id: Optional[str] = Cookie(None)):
