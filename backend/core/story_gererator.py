@@ -6,7 +6,7 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import PydanticOutputParser
 
 from .prompts import STORY_PROMPT
-from models.story import Story
+from models.story import Story, StoryNode
 from .models import StoryLLMResponse, StoryNodeLLM
 
 
@@ -37,3 +37,43 @@ class StoryGenerator:
             response_text = raw_response.content
 
         story_structure = story_parser.parse(response_text)
+
+        story_db = Story(title=story_structure.title, session_id=session_id)
+        db.add(story_db)
+        db.flush()
+
+        root_node_data = story_structure.rootNode
+        if isinstance(root_node_data, dict):
+            root_node_data = StoryNodeLLM.model_validate(root_node_data)
+
+        # TODO: Process data
+
+        db.commit()
+        return story_db
+
+    @classmethod
+    def _process_story_node(
+        cls, db: Session, story_id: int, node_data: StoryNodeLLM, is_root: bool = False
+    ) -> StoryNode:
+        node = StoryNode(
+            story_id=story_id,
+            content=(
+                node_data.content
+                if hasattr(node_data, "content")
+                else node_data["content"]
+            ),
+            is_root=is_root,
+            is_ending=(
+                node_data.isEnding
+                if hasattr(node_data, "isEnding")
+                else node_data["isEnding"]
+            ),
+            is_winning_ending=(
+                node_data.isWinningEnding
+                if hasattr(node_data, "isWinningEnding")
+                else node_data["isWinningEnding"]
+            ),
+            options=[],
+        )
+        db.add(node)
+        db.flush()
