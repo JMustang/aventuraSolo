@@ -46,7 +46,7 @@ class StoryGenerator:
         if isinstance(root_node_data, dict):
             root_node_data = StoryNodeLLM.model_validate(root_node_data)
 
-        # TODO: Process data
+        cls._process_story_node(db, story_db.id, root_node_data, is_root=True)
 
         db.commit()
         return story_db
@@ -77,3 +77,23 @@ class StoryGenerator:
         )
         db.add(node)
         db.flush()
+
+        if not node.is_ending and (hasattr(node_data, "options") and node_data.options):
+            options_list = []
+            for option_data in node_data.options:
+                next_node = option_data.nextNode
+
+                if isinstance(next_node, dict):
+                    next_node = StoryNodeLLM.model_validate(next_node)
+
+                child_node = cls._process_story_node(
+                    db, story_id, next_node, is_root=False
+                )
+
+                options_list.append(
+                    {"text": option_data.text, "node_id": child_node.id}
+                )
+            node.options = options_list
+
+        db.flush()
+        return node
