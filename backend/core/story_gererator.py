@@ -1,6 +1,8 @@
 from sqlalchemy.orm import Session
 
-from langchain_openai import ChatOpenAI
+import os
+import requests
+
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import PydanticOutputParser
 
@@ -15,28 +17,64 @@ load_dotenv()
 class StoryGenerator:
 
     @classmethod
-    def _get_llm(cls):
-        return ChatOpenAI(model="deepseek-3.5", temperature=0.7, max_token=2048)
+    def _call_deepseek(cls, prompt_text: str) -> str:
+        """Chama a API do Deepseek e retorna o texto da resposta.
+
+        Observação: ajuste `endpoint` e a extração do texto conforme a resposta real
+        da API do Deepseek (este é um template genérico).
+        """
+        api_key = os.getenv("DEEPSEEK_API_KEY")
+        if not api_key:
+            raise RuntimeError(
+                "DEEPSEEK_API_KEY não definido. Exporte a variável de ambiente."
+            )
+
+        endpoint = os.getenv(
+            "DEEPSEEK_API_ENDPOINT",
+            "https://api.deepseek.ai/v1/chat/completions",
+        )
+
+        headers = {
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json",
+        }
+
+        payload = {
+            "model": "deepseek-3.5",
+            "messages": [{"role": "user", "content": prompt_text}],
+            "temperature": 0.7,
+            "max_tokens": 2048,
+        }
+
+        resp = requests.post(endpoint, json=payload, headers=headers, timeout=30)
+        resp.raise_for_status()
+        data = resp.json()
+
+        # Extrair conteúdo. Alguns providers usam data['choices'][0]['message']['content']
+        # ou data['choices'][0]['text']. Ajuste conforme a resposta real do Deepseek.
+        try:
+            return data["choices"][0]["message"]["content"]
+        except Exception:
+            try:
+                return data["choices"][0]["text"]
+            except Exception:
+                # fallback: stringify
+                return str(data)
 
     @classmethod
     def generate_story(
         cls, db: Session, session_id: str, theme: str = "fantasy"
     ) -> Story:
-        llm = cls._get_llm()
         story_parser = PydanticOutputParser(pydantic_object=StoryLLMResponse)
 
-        prompt = ChatPromptTemplate.from_messages(
-            [
-                ("system", STORY_PROMPT),
-                ("human", f"Cria uma historia com esse tema: {theme}"),
-            ]
-        ).partial(format_instructions=story_parser.get_format_instructions())
+        # Monta o prompt final combinando instruções de sistema, prompt do user
+        # e as instruções de formatação do parser.
+        prompt_text = (
+            f"{STORY_PROMPT}\n\nCria uma historia com esse tema: {theme}\n\n"
+            f"{story_parser.get_format_instructions()}"
+        )
 
-        raw_response = llm.invoke(prompt.invoke({}))
-
-        response_text = raw_response
-        if hasattr(raw_response, "content"):
-            response_text = raw_response.content
+        response_text = cls._call_deepseek(prompt_text)
 
         story_structure = story_parser.parse(response_text)
 
