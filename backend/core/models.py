@@ -15,11 +15,19 @@ class StoryNodeLLM(BaseModel):
     isWinningEnding: bool = Field(
         description="Whether this node is a winning ending node"
     )
-    option: Optional[List[StoryOptionLLM]] = Field(
+    options: Optional[List[StoryOptionLLM]] = Field(
         default=None, description="The options for this node"
     )
 
 
+class StoryTemplateMeta(BaseModel):
+    slug: str
+    title: str
+    theme: str
+
+
 class StoryLLMResponse(BaseModel):
+    slug: str
+    theme: str
     title: str = Field(description="The title of the story")
     rootNode: StoryNodeLLM = Field(description="The root node of the story")

@@ -1,0 +1,68 @@
+{
+  "slug": "estacao-orbitral",
+  "title": "Estação Orbital Zeta",
+  "theme": "sci-fi",
+  "rootNode": {
+    "content": "Alarmes ecoam pela estação orbital Zeta. As luzes piscam em vermelho e o computador central anuncia uma falha no escudo de vida. O painel indica dois pontos críticos: o núcleo do reator e a câmara de evacuação.",
+    "isEnding": false,
+    "isWinningEnding": false,
+    "options": [
+      {
+        "text": "Correr para o reator",
+        "nextNode": {
+          "content": "O reator vibra perigosamente. Você pode estabilizar o fluxo manualmente ou selar o compartimento e sacrificar aquela seção da estação.",
+          "isEnding": false,
+          "isWinningEnding": false,
+          "options": [
+            {
+              "text": "Estabilizar o reator",
+              "nextNode": {
+                "content": "Com precisão e calma, você reequilibra o fluxo de energia. Os alarmes cessam e a tripulação inteira é salva. Você é celebrado como herói da Zeta.",
+                "isEnding": true,
+                "isWinningEnding": true,
+                "options": []
+              }
+            },
+            {
+              "text": "Selar o compartimento",
+              "nextNode": {
+                "content": "O selamento impede a explosão, mas três tripulantes ficam presos do outro lado. A estação sobrevive, mas a missão termina em tragédia.",
+                "isEnding": true,
+                "isWinningEnding": false,
+                "options": []
+              }
+            }
+          ]
+        }
+      },
+      {
+        "text": "Ir para a câmara de evacuação",
+        "nextNode": {
+          "content": "A câmara está lotada de pânico. Restam apenas duas cápsulas de escape funcionais e três pessoas na fila, incluindo você.",
+          "isEnding": false,
+          "isWinningEnding": false,
+          "options": [
+            {
+              "text": "Ceder sua vaga a outra pessoa",
+              "nextNode": {
+                "content": "Você garante a evacuação de uma cientista essencial, mas fica na estação quando o escudo colapsa. Sua coragem é lembrada nos registros da frota.",
+                "isEnding": true,
+                "isWinningEnding": false,
+                "options": []
+              }
+            },
+            {
+              "text": "Entrar em uma cápsula",
+              "nextNode": {
+                "content": "A cápsula se desprende a tempo e você observa a estação sendo salva por drones de reparo automáticos. Você sobrevive e retorna à Terra.",
+                "isEnding": true,
+                "isWinningEnding": true,
+                "options": []
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

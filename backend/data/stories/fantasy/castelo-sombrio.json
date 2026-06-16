@@ -1,0 +1,77 @@
+{
+  "slug": "castelo-sombrio",
+  "title": "O Castelo Sombrio",
+  "theme": "fantasy",
+  "rootNode": {
+    "content": "Ao anoitecer, você chega às portas de um castelo em ruínas. Uma névoa fria envolve as torres quebradas e um corvo grita no alto. A entrada principal está entreaberta; ao lado, uma escada de pedra desce para um jardim abandonado.",
+    "isEnding": false,
+    "isWinningEnding": false,
+    "options": [
+      {
+        "text": "Entrar pelo salão principal",
+        "nextNode": {
+          "content": "Dentro do salão, velas acesas sozinhas iluminam tapeçarias rasgadas. No centro, um cavaleiro de armadura negra permanece imóvel, como se esperasse por você.",
+          "isEnding": false,
+          "isWinningEnding": false,
+          "options": [
+            {
+              "text": "Cumprimentar o cavaleiro",
+              "nextNode": {
+                "content": "O cavaleiro remove o elmo e revela o rosto de um rei antigo. Ele entrega a você uma chave dourada e diz: 'Liberte este reino da maldição.' Você aceita a missão e parte vitorioso.",
+                "isEnding": true,
+                "isWinningEnding": true,
+                "options": []
+              }
+            },
+            {
+              "text": "Atacar o cavaleiro",
+              "nextNode": {
+                "content": "Sua lâmina ricocheteia na armadura encantada. O cavaleiro ergue a espada e um golpe único encerra sua jornada.",
+                "isEnding": true,
+                "isWinningEnding": false,
+                "options": []
+              }
+            }
+          ]
+        }
+      },
+      {
+        "text": "Descer para o jardim",
+        "nextNode": {
+          "content": "O jardim está coberto de rosas negras. No fundo, uma fonte seca esconde uma passagem estreita que leva às masmorras.",
+          "isEnding": false,
+          "isWinningEnding": false,
+          "options": [
+            {
+              "text": "Explorar as masmorras",
+              "nextNode": {
+                "content": "Nas masmorras, runas brilham nas paredes. Você decifra o ritual antigo e quebra a maldição do castelo. A luz invade os corredores e você sai como herói.",
+                "isEnding": true,
+                "isWinningEnding": true,
+                "options": []
+              }
+            },
+            {
+              "text": "Colher uma rosa negra",
+              "nextNode": {
+                "content": "Ao tocar a rosa, espinhos venenosos perfuram sua mão. A escuridão toma seus sentidos e você desmaia para sempre no jardim.",
+                "isEnding": true,
+                "isWinningEnding": false,
+                "options": []
+              }
+            }
+          ]
+        }
+      },
+      {
+        "text": "Voltar para a estrada",
+        "nextNode": {
+          "content": "Você decide que o castelo é perigoso demais e segue viagem. A aventura termina sem glória, mas com vida.",
+          "isEnding": true,
+          "isWinningEnding": false,
+          "options": []
+        }
+      }
+    ]
+  }
+}

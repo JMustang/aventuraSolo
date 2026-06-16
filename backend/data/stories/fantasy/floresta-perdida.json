@@ -1,0 +1,68 @@
+{
+  "slug": "floresta-perdida",
+  "title": "A Floresta Perdida",
+  "theme": "fantasy",
+  "rootNode": {
+    "content": "Você acorda em uma clareira desconhecida. Árvores gigantes formam um círculo ao redor e um mapa rasgado está em sua mão. Uma trilha leva para o norte; outra, para o som de um riacho ao leste.",
+    "isEnding": false,
+    "isWinningEnding": false,
+    "options": [
+      {
+        "text": "Seguir a trilha ao norte",
+        "nextNode": {
+          "content": "A trilha termina em uma cabana coberta de musgo. Uma druida idosa oferece chá e pergunta se você busca a saída da floresta.",
+          "isEnding": false,
+          "isWinningEnding": false,
+          "options": [
+            {
+              "text": "Aceitar a ajuda da druida",
+              "nextNode": {
+                "content": "A druida guia você por um atalho secreto entre as raízes. Ao romper a última barreira mágica, você enxerga a vila ao longe. Você sobreviveu e encontrou o caminho de casa.",
+                "isEnding": true,
+                "isWinningEnding": true,
+                "options": []
+              }
+            },
+            {
+              "text": "Recusar e seguir sozinho",
+              "nextNode": {
+                "content": "Sem a orientação da druida, você se perde em espirais de árvores idênticas. A noite cai e a floresta nunca mais libera você.",
+                "isEnding": true,
+                "isWinningEnding": false,
+                "options": []
+              }
+            }
+          ]
+        }
+      },
+      {
+        "text": "Ir em direção ao riacho",
+        "nextNode": {
+          "content": "No riacho, um lobo ferido geme entre as pedras. Ele olha para você com olhos inteligentes, como se pedisse ajuda.",
+          "isEnding": false,
+          "isWinningEnding": false,
+          "options": [
+            {
+              "text": "Curar o lobo",
+              "nextNode": {
+                "content": "Você limpa os ferimentos do lobo e ele se levanta. Em gratidão, conduz você até uma passagem oculta atrás da cachoeira. Você escapa da floresta em segurança.",
+                "isEnding": true,
+                "isWinningEnding": true,
+                "options": []
+              }
+            },
+            {
+              "text": "Afastar-se com cuidado",
+              "nextNode": {
+                "content": "O lobo rosna e desaparece na mata. Sem rumo, você vagueia até suas forças acabarem entre os troncos eternos.",
+                "isEnding": true,
+                "isWinningEnding": false,
+                "options": []
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

@@ -1,6 +1,6 @@
 from typing import List, Optional, Dict
 from datetime import datetime
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class StoryOptionsSchema(BaseModel):
@@ -30,8 +30,23 @@ class StoryBase(BaseModel):
         from_attributes = True
 
 
+class StoryCatalogItem(BaseModel):
+    slug: str
+    title: str
+    theme: str
+
+
+class StoryCatalogResponse(BaseModel):
+    themes: List[str]
+    stories: List[StoryCatalogItem]
+
+
 class CreateStoryRequest(BaseModel):
     theme: str
+    story_slug: Optional[str] = Field(
+        default=None,
+        description="Slug da história. Se omitido, uma história aleatória do tema é escolhida.",
+    )
 
 
 class CompleteStoryResponse(StoryBase):

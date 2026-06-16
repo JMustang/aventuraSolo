@@ -11,9 +11,12 @@ from schemas.story import (
     CompleteStoryResponse,
     CompleteStoryNodeResponse,
     CreateStoryRequest,
+    StoryCatalogResponse,
+    StoryCatalogItem,
 )
 from schemas.job import StoryJobResponse
 from core.story_gererator import StoryGenerator
+from core.story_catalog import StoryCatalog
 
 router = APIRouter(prefix="/stories", tags=["Stories"])
 
@@ -43,13 +46,19 @@ def create_story(
     db.commit()
 
     background_tasks.add_task(
-        generate_story_task, job_id=job_id, theme=request.theme, session_id=session_id
+        generate_story_task,
+        job_id=job_id,
+        theme=request.theme,
+        story_slug=request.story_slug,
+        session_id=session_id,
     )
 
     return job
 
 
-def generate_story_task(job_id: str, theme: str, session_id: str):
+def generate_story_task(
+    job_id: str, theme: str, session_id: str, story_slug: str | None = None
+):
     db = SessionLocal()
 
     try:
@@ -62,7 +71,9 @@ def generate_story_task(job_id: str, theme: str, session_id: str):
             job.status = "processing"
             db.commit()
 
-            story = StoryGenerator.generate_story(db, session_id, theme)
+            story = StoryGenerator.generate_story(
+                db, session_id, theme, story_slug=story_slug
+            )
 
             job.story_id = story.id
             job.status = "completed"
@@ -76,6 +87,17 @@ def generate_story_task(job_id: str, theme: str, session_id: str):
             db.commit()
     finally:
         db.close()
+
+
+@router.get("/catalog", response_model=StoryCatalogResponse)
+def list_story_catalog(theme: Optional[str] = None):
+    stories = StoryCatalog.list_stories(theme=theme)
+    themes = StoryCatalog.list_themes()
+
+    return StoryCatalogResponse(
+        themes=themes,
+        stories=[StoryCatalogItem(**story.model_dump()) for story in stories],
+    )
 
 
 @router.get("/{story_id}/complete", response_model=CompleteStoryResponse)
@@ -98,7 +120,7 @@ def build_complete_story_tree(db: Session, story: Story) -> CompleteStoryRespons
             id=node.id,
             content=node.content,
             is_ending=node.is_ending,
-            is_missing_ending=node.is_winning_ending,
+            is_winning_ending=node.is_winning_ending,
             options=node.options,
         )
 

@@ -1,0 +1,49 @@
+{
+  "slug": "SUBSTITUA-slug-da-historia",
+  "title": "SUBSTITUA: Título da História",
+  "theme": "SUBSTITUA-tema",
+  "rootNode": {
+    "content": "SUBSTITUA: Descreva a cena inicial da história aqui.",
+    "isEnding": false,
+    "isWinningEnding": false,
+    "options": [
+      {
+        "text": "SUBSTITUA: Texto da opção 1",
+        "nextNode": {
+          "content": "SUBSTITUA: O que acontece se o jogador escolher a opção 1.",
+          "isEnding": false,
+          "isWinningEnding": false,
+          "options": [
+            {
+              "text": "SUBSTITUA: Texto da sub-opção A",
+              "nextNode": {
+                "content": "SUBSTITUA: Final vencedor — descreva o desfecho positivo.",
+                "isEnding": true,
+                "isWinningEnding": true,
+                "options": []
+              }
+            },
+            {
+              "text": "SUBSTITUA: Texto da sub-opção B",
+              "nextNode": {
+                "content": "SUBSTITUA: Final neutro ou derrota — descreva o desfecho.",
+                "isEnding": true,
+                "isWinningEnding": false,
+                "options": []
+              }
+            }
+          ]
+        }
+      },
+      {
+        "text": "SUBSTITUA: Texto da opção 2",
+        "nextNode": {
+          "content": "SUBSTITUA: O que acontece se o jogador escolher a opção 2.",
+          "isEnding": true,
+          "isWinningEnding": false,
+          "options": []
+        }
+      }
+    ]
+  }
+}

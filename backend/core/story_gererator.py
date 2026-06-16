@@ -1,82 +1,21 @@
 from sqlalchemy.orm import Session
 
-import os
-import requests
-
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.output_parsers import PydanticOutputParser
-
-from .prompts import STORY_PROMPT
 from models.story import Story, StoryNode
-from .models import StoryLLMResponse, StoryNodeLLM
-from dotenv import load_dotenv
-
-load_dotenv()
+from .models import StoryNodeLLM
+from .story_catalog import StoryCatalog
 
 
 class StoryGenerator:
 
     @classmethod
-    def _call_deepseek(cls, prompt_text: str) -> str:
-        """Chama a API do Deepseek e retorna o texto da resposta.
-
-        Observação: ajuste `endpoint` e a extração do texto conforme a resposta real
-        da API do Deepseek (este é um template genérico).
-        """
-        api_key = os.getenv("DEEPSEEK_API_KEY")
-        if not api_key:
-            raise RuntimeError(
-                "DEEPSEEK_API_KEY não definido. Exporte a variável de ambiente."
-            )
-
-        endpoint = os.getenv(
-            "DEEPSEEK_API_ENDPOINT",
-            "https://api.deepseek.ai/v1/chat/completions",
-        )
-
-        headers = {
-            "Authorization": f"Bearer {api_key}",
-            "Content-Type": "application/json",
-        }
-
-        payload = {
-            "model": "deepseek-3.5",
-            "messages": [{"role": "user", "content": prompt_text}],
-            "temperature": 0.7,
-            "max_tokens": 2048,
-        }
-
-        resp = requests.post(endpoint, json=payload, headers=headers, timeout=30)
-        resp.raise_for_status()
-        data = resp.json()
-
-        # Extrair conteúdo. Alguns providers usam data['choices'][0]['message']['content']
-        # ou data['choices'][0]['text']. Ajuste conforme a resposta real do Deepseek.
-        try:
-            return data["choices"][0]["message"]["content"]
-        except Exception:
-            try:
-                return data["choices"][0]["text"]
-            except Exception:
-                # fallback: stringify
-                return str(data)
-
-    @classmethod
     def generate_story(
-        cls, db: Session, session_id: str, theme: str = "fantasy"
+        cls,
+        db: Session,
+        session_id: str,
+        theme: str = "fantasy",
+        story_slug: str | None = None,
     ) -> Story:
-        story_parser = PydanticOutputParser(pydantic_object=StoryLLMResponse)
-
-        # Monta o prompt final combinando instruções de sistema, prompt do user
-        # e as instruções de formatação do parser.
-        prompt_text = (
-            f"{STORY_PROMPT}\n\nCria uma historia com esse tema: {theme}\n\n"
-            f"{story_parser.get_format_instructions()}"
-        )
-
-        response_text = cls._call_deepseek(prompt_text)
-
-        story_structure = story_parser.parse(response_text)
+        story_structure = StoryCatalog.get_story(theme=theme, story_slug=story_slug)
 
         story_db = Story(title=story_structure.title, session_id=session_id)
         db.add(story_db)
